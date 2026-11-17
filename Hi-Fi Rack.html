@@ -14,8 +14,12 @@
   --gold: #cfae66;
   --lcd: #e4eeff;
   --vfd: #79ffb4;
+  --vfd-glow: rgba(90,255,160,.5);
+  --vfd-tint: rgba(121,255,180,.06);
   --led: #ff4a3d;
   --led-off: #4a1a17;
+  --win-bg: #05070a;
+  --vfd-bg: #020a05;
   --font-label: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;
   --font-lcd: 'Share Tech Mono', 'Roboto Mono', 'Courier New', monospace;
   color-scheme: dark;
@@ -70,10 +74,10 @@ body {
 
 /* ---------- display windows ---------- */
 .win {
-  position: relative; overflow: hidden; border-radius: 3px; background: #05070a;
+  position: relative; overflow: hidden; border-radius: 3px; background: var(--win-bg);
   box-shadow: inset 0 0 0 2px #0b0c0e, inset 0 0 26px #000, 0 0 0 1px rgba(255,255,255,.08), 0 1px 0 1px rgba(255,255,255,.05);
 }
-.win.vfd { background: #020a05; }
+.win.vfd { background: var(--vfd-bg); }
 .win canvas { display: block; width: 100%; height: auto; aspect-ratio: var(--ar); }
 .win::after {
   content: ""; position: absolute; inset: 0; pointer-events: none;
@@ -189,17 +193,17 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 17px; border-radius: 
 .program { margin-top: 30px; border: 1px solid #2a2d32; border-radius: 4px; background: #0e1012; box-shadow: inset 0 0 30px rgba(0,0,0,.6); }
 .phead { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 12px 16px; border-bottom: 1px solid #23262a; }
 .phead h2 { margin: 0; font-size: 12px; letter-spacing: .26em; font-weight: 700; color: var(--gold); text-transform: uppercase; }
-.phead .count { font-family: var(--font-lcd); font-size: 13px; color: var(--vfd); margin-right: auto; text-shadow: 0 0 8px rgba(90,255,160,.55); }
+.phead .count { font-family: var(--font-lcd); font-size: 13px; color: var(--vfd); margin-right: auto; text-shadow: 0 0 8px var(--vfd-glow); }
 .phead .key { height: 30px; }
 .plist { list-style: none; margin: 0; padding: 6px 0; max-height: 300px; overflow: auto; position: relative; }
 .tr { display: grid; grid-template-columns: 38px minmax(0, 1fr) 54px; gap: 8px; width: 100%; padding: 7px 16px; border: 0; background: transparent; text-align: left; cursor: pointer; font-family: var(--font-lcd); font-size: 14px; color: #9aa0a7; }
 .tr:hover { background: rgba(255,255,255,.04); }
 .tr .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tr .d { text-align: right; color: #666c73; }
-.tr.now { color: var(--vfd); text-shadow: 0 0 8px rgba(90,255,160,.5); background: rgba(121,255,180,.06); }
+.tr.now { color: var(--vfd); text-shadow: 0 0 8px var(--vfd-glow); background: var(--vfd-tint); }
 .tr.now .d { color: var(--vfd); }
 .empty { padding: 26px 16px 30px; display: grid; gap: 14px; justify-items: start; }
-.empty strong { font-family: var(--font-lcd); font-weight: 400; font-size: 18px; letter-spacing: .1em; color: var(--vfd); text-shadow: 0 0 10px rgba(90,255,160,.5); }
+.empty strong { font-family: var(--font-lcd); font-weight: 400; font-size: 18px; letter-spacing: .1em; color: var(--vfd); text-shadow: 0 0 10px var(--vfd-glow); }
 .empty p { margin: 0; max-width: 62ch; line-height: 1.5; color: var(--ink-dim); font-size: 15px; }
 .empty .acts { display: flex; gap: 10px; flex-wrap: wrap; }
 .empty .key { padding: 0 16px; }
@@ -208,7 +212,7 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 17px; border-radius: 
 .msg { min-height: 1.2em; margin: 10px 2px 0; font-family: var(--font-lcd); font-size: 13px; color: var(--vfd); }
 
 .veil { position: fixed; inset: 0; z-index: 50; display: none; place-items: center; background: rgba(4,6,8,.82); backdrop-filter: blur(3px);
-  font-family: var(--font-lcd); font-size: clamp(18px, 4vw, 30px); letter-spacing: .12em; color: var(--vfd); text-shadow: 0 0 14px rgba(90,255,160,.7); text-align: center; padding: 20px; }
+  font-family: var(--font-lcd); font-size: clamp(18px, 4vw, 30px); letter-spacing: .12em; color: var(--vfd); text-shadow: 0 0 14px var(--vfd-glow); text-align: center; padding: 20px; }
 .veil.on { display: grid; }
 
 @media (max-width: 560px) {
@@ -273,6 +277,10 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 17px; border-radius: 
           <div class="bigknob">
             <div class="knob big" data-k="master" data-def="0.72" data-size="92" data-name="Master volume"></div>
             <span class="sil">Volume</span>
+          </div>
+          <div class="bigknob">
+            <div class="knob big" id="k-led" data-k="ledScheme" data-def="0" data-size="64" data-name="LED color scheme"></div>
+            <span class="sil" id="led-scheme-name">Green VFD</span>
           </div>
         </div>
       </div>
@@ -340,7 +348,7 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 17px; border-radius: 
   </section>
 
   <p class="msg" id="msg" aria-live="polite"></p>
-  <p class="hint"><kbd>Space</kbd> play / pause &nbsp; <kbd>←</kbd> <kbd>→</kbd> search &nbsp; <kbd>N</kbd> <kbd>P</kbd> next / previous &nbsp; <kbd>↑</kbd> <kbd>↓</kbd> volume &nbsp; <kbd>M</kbd> mute &nbsp; Drag knobs up and down, scroll over them, or double-click to reset.</p>
+  <p class="hint"><kbd>Space</kbd> play / pause &nbsp; <kbd>←</kbd> <kbd>→</kbd> search &nbsp; <kbd>N</kbd> <kbd>P</kbd> next / previous &nbsp; <kbd>↑</kbd> <kbd>↓</kbd> volume &nbsp; <kbd>M</kbd> mute &nbsp; Drag knobs up and down, scroll over them, or double-click to reset. The LED dial on the SA-31 switches display color schemes (Green VFD, Amber Retrowave, Ice Blue, Cyan Laser, Magenta Neon, Ruby Red, Purple Haze, White Cold).</p>
 </main>
 
 <div class="veil" id="veil">DROP MUSIC FILES OR A FOLDER</div>
@@ -356,8 +364,38 @@ const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const MONO = '"Share Tech Mono","Roboto Mono","DejaVu Sans Mono",monospace';
 
-const PAL_LCD = { on: '#e4eeff', off: 'rgba(228,238,255,0.075)', dim: 'rgba(228,238,255,0.38)', glow: 'rgba(150,195,255,0.9)', blur: 9 };
-const PAL_VFD = { on: '#79ffb4', off: 'rgba(121,255,180,0.07)', dim: 'rgba(121,255,180,0.4)', glow: 'rgba(80,255,160,0.95)', blur: 12 };
+/* ================= LED color schemes ================= */
+const hexRgb = h => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
+const mkPal = (on, gl) => ({ on, off: `rgba(${gl},0.075)`, dim: `rgba(${gl},0.4)`, glow: `rgba(${gl},0.9)`, blur: 10 });
+const SCHEMES = [
+  { name: 'Green VFD',      lcd: '#e4eeff', lcdGlow: '150,195,255', vfd: '#79ffb4', vfdGlow: '80,255,160', led: '#ff4a3d', ledOff: '#4a1a17', winBg: '#05070a', vfdBg: '#020a05' },
+  { name: 'Amber Retrowave', lcd: '#ffd9a0', lcdGlow: '255,180,80',  vfd: '#ffb347', vfdGlow: '255,160,60',  led: '#ff9d2e', ledOff: '#4a3010', winBg: '#0c0508', vfdBg: '#0b0603' },
+  { name: 'Ice Blue',       lcd: '#dff2ff', lcdGlow: '140,210,255', vfd: '#6fd8ff', vfdGlow: '90,200,255',  led: '#38b6ff', ledOff: '#123048', winBg: '#04070c', vfdBg: '#020810' },
+  { name: 'Cyan Laser',     lcd: '#d8fbff', lcdGlow: '90,240,255',  vfd: '#3df5ff', vfdGlow: '60,240,255',  led: '#00e5ff', ledOff: '#0d3a40', winBg: '#03090b', vfdBg: '#020b0d' },
+  { name: 'Magenta Neon',   lcd: '#ffdaf6', lcdGlow: '255,140,230', vfd: '#ff5edb', vfdGlow: '255,90,215',  led: '#ff3ea5', ledOff: '#43103a', winBg: '#0a040a', vfdBg: '#0d030b' },
+  { name: 'Ruby Red',       lcd: '#ffe2de', lcdGlow: '255,150,130', vfd: '#ff5340', vfdGlow: '255,80,60',   led: '#ff2d2d', ledOff: '#4a1212', winBg: '#0a0404', vfdBg: '#0d0202' },
+  { name: 'Purple Haze',    lcd: '#e9dcff', lcdGlow: '180,150,255', vfd: '#b07bff', vfdGlow: '150,100,255', led: '#9d5cff', ledOff: '#2c1a4a', winBg: '#07050c', vfdBg: '#080510' },
+  { name: 'White Cold',     lcd: '#f2f6ff', lcdGlow: '210,225,255', vfd: '#eef4ff', vfdGlow: '220,235,255', led: '#e8ecf2', ledOff: '#33363b', winBg: '#060709', vfdBg: '#07090c' },
+];
+SCHEMES.forEach(s => { s.palLcd = mkPal(s.lcd, s.lcdGlow); s.palVfd = mkPal(s.vfd, s.vfdGlow); });
+let PAL_LCD = SCHEMES[0].palLcd;
+let PAL_VFD = SCHEMES[0].palVfd;
+let schemeIdx = -1;
+function applyScheme(i) {
+  if (i === schemeIdx) return;
+  schemeIdx = i;
+  const s = SCHEMES[i];
+  PAL_LCD = s.palLcd; PAL_VFD = s.palVfd;
+  const r = document.documentElement.style;
+  r.setProperty('--vfd', s.vfd);
+  r.setProperty('--vfd-glow', `rgba(${s.vfdGlow},.5)`);
+  r.setProperty('--vfd-tint', `rgba(${hexRgb(s.vfd)},.06)`);
+  r.setProperty('--led', s.led);
+  r.setProperty('--led-off', s.ledOff);
+  r.setProperty('--win-bg', s.winBg);
+  r.setProperty('--vfd-bg', s.vfdBg);
+  const nm = $('#led-scheme-name'); if (nm) nm.textContent = s.name;
+}
 
 try { ['14px "Share Tech Mono"', '14px "Roboto Mono"'].forEach(f => document.fonts.load(f)); } catch (e) {}
 
@@ -424,8 +462,15 @@ function makeKnob(el, def, name, onChange) {
 }
 $$('[data-k]').forEach(el => {
   el.style.setProperty('--k', (+el.dataset.size || 56) + 'px');
-  K[el.dataset.k] = makeKnob(el, parseFloat(el.dataset.def), el.dataset.name, applyAudioParams);
+  const ch = el.dataset.k === 'ledScheme' ? () => setScheme(K.ledScheme.value) : applyAudioParams;
+  K[el.dataset.k] = makeKnob(el, parseFloat(el.dataset.def), el.dataset.name, ch);
 });
+let lastSnap = -1;
+function setScheme(v) {
+  const i = clamp(Math.round(v * (SCHEMES.length - 1)), 0, SCHEMES.length - 1);
+  applyScheme(i);
+  if (i !== lastSnap) { lastSnap = i; K.ledScheme.set(i / (SCHEMES.length - 1), true); }
+}
 
 /* ================= audio graph ================= */
 let A = null;
@@ -876,7 +921,7 @@ const lvlNorm = db => clamp((db + 40) / 46, 0, 1);
 /* ================= CD display ================= */
 function drawCD(cv, now) {
   const c = ctxOf(cv), W = cv._W, H = cv._H;
-  c.fillStyle = '#05070a'; c.fillRect(0, 0, W, H);
+  c.fillStyle = SCHEMES[schemeIdx].winBg; c.fillRect(0, 0, W, H);
   const idle = state.index < 0;
   const playing = !audio.paused && !audio.ended;
   const paused = !playing && !idle && audio.currentTime > 0.05;
@@ -935,7 +980,7 @@ function drawCD(cv, now) {
 const FREQ_TICKS = [[63, '63'], [125, '125'], [250, '250'], [500, '500'], [1000, '1K'], [2000, '2K'], [4000, '4K'], [8000, '8K'], [16000, '16K']];
 function drawEQ(cv) {
   const c = ctxOf(cv), W = cv._W, H = cv._H;
-  c.fillStyle = '#05070a'; c.fillRect(0, 0, W, H);
+  c.fillStyle = SCHEMES[schemeIdx].winBg; c.fillRect(0, 0, W, H);
   const ox = 14, oy = 14, aw = 410, ah = 108, rows = 24, step = ah / rows, sh = step * 0.74;
   const on = new Path2D(), off = new Path2D();
   if (state.mode < 2) {
@@ -1005,7 +1050,7 @@ function dbToX(db) {
 }
 function drawVFD(cv) {
   const c = ctxOf(cv), W = cv._W, H = cv._H;
-  c.fillStyle = '#020a05'; c.fillRect(0, 0, W, H);
+  c.fillStyle = SCHEMES[schemeIdx].vfdBg; c.fillRect(0, 0, W, H);
   const x0 = 48, x1 = 520, n = 48, step = (x1 - x0) / n, sw = step - 1.3;
   const on = new Path2D(), off = new Path2D();
   const row = (y, h, db, pk) => {
@@ -1036,6 +1081,7 @@ let last = performance.now();
 function frame(now) {
   const dt = Math.min(0.1, (now - last) / 1000);
   last = now;
+  setScheme(K.ledScheme.value);
   updateMeters(dt);
   const st = state.mode === 1 ? bars64 : bars32;
   bandTargets(st, state.mode === 1 ? 0.7 : 0.55);
