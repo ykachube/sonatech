@@ -348,7 +348,7 @@ input[type=range]::-moz-range-thumb { width: 11px; height: 17px; border-radius: 
   </section>
 
   <p class="msg" id="msg" aria-live="polite"></p>
-  <p class="hint"><kbd>Space</kbd> play / pause &nbsp; <kbd>←</kbd> <kbd>→</kbd> search &nbsp; <kbd>N</kbd> <kbd>P</kbd> next / previous &nbsp; <kbd>↑</kbd> <kbd>↓</kbd> volume &nbsp; <kbd>M</kbd> mute &nbsp; Drag knobs up and down, scroll over them, or double-click to reset. The LED dial on the SA-31 switches display color schemes (Green VFD, Amber Retrowave, Ice Blue, Cyan Laser, Magenta Neon, Ruby Red, Purple Haze, White Cold).</p>
+  <p class="hint"><kbd>Space</kbd> play / pause &nbsp; <kbd>←</kbd> <kbd>→</kbd> search &nbsp; <kbd>N</kbd> <kbd>P</kbd> next / previous &nbsp; <kbd>↑</kbd> <kbd>↓</kbd> volume &nbsp; <kbd>M</kbd> mute &nbsp; Drag knobs up and down, scroll over them, or double-click to reset. The LED dial on the SA-31 switches display color schemes (Green VFD, Amber, Retrowave, Ice Blue, Cyan Laser, Magenta Neon, Ruby Red, Purple Haze, Synthwave, White Cold).</p>
 </main>
 
 <div class="veil" id="veil">DROP MUSIC FILES OR A FOLDER</div>
@@ -369,12 +369,14 @@ const hexRgb = h => { const n = parseInt(h.slice(1), 16); return [n >> 16 & 255,
 const mkPal = (on, gl) => ({ on, off: `rgba(${gl},0.075)`, dim: `rgba(${gl},0.4)`, glow: `rgba(${gl},0.9)`, blur: 10 });
 const SCHEMES = [
   { name: 'Green VFD',      lcd: '#e4eeff', lcdGlow: '150,195,255', vfd: '#79ffb4', vfdGlow: '80,255,160', led: '#ff4a3d', ledOff: '#4a1a17', winBg: '#05070a', vfdBg: '#020a05' },
-  { name: 'Amber Retrowave', lcd: '#ffd9a0', lcdGlow: '255,180,80',  vfd: '#ffb347', vfdGlow: '255,160,60',  led: '#ff9d2e', ledOff: '#4a3010', winBg: '#0c0508', vfdBg: '#0b0603' },
+  { name: 'Amber',          lcd: '#ffd9a0', lcdGlow: '255,180,80',  vfd: '#ffb347', vfdGlow: '255,160,60',  led: '#ff9d2e', ledOff: '#4a3010', winBg: '#0a0604', vfdBg: '#0b0603' },
+  { name: 'Retrowave',      lcd: '#ffc4e4', lcdGlow: '255,120,220', vfd: '#ff71ce', vfdGlow: '255,90,200',  led: '#ff2e97', ledOff: '#4a1038', winBg: '#0b0414', vfdBg: '#12061f' },
   { name: 'Ice Blue',       lcd: '#dff2ff', lcdGlow: '140,210,255', vfd: '#6fd8ff', vfdGlow: '90,200,255',  led: '#38b6ff', ledOff: '#123048', winBg: '#04070c', vfdBg: '#020810' },
   { name: 'Cyan Laser',     lcd: '#d8fbff', lcdGlow: '90,240,255',  vfd: '#3df5ff', vfdGlow: '60,240,255',  led: '#00e5ff', ledOff: '#0d3a40', winBg: '#03090b', vfdBg: '#020b0d' },
   { name: 'Magenta Neon',   lcd: '#ffdaf6', lcdGlow: '255,140,230', vfd: '#ff5edb', vfdGlow: '255,90,215',  led: '#ff3ea5', ledOff: '#43103a', winBg: '#0a040a', vfdBg: '#0d030b' },
   { name: 'Ruby Red',       lcd: '#ffe2de', lcdGlow: '255,150,130', vfd: '#ff5340', vfdGlow: '255,80,60',   led: '#ff2d2d', ledOff: '#4a1212', winBg: '#0a0404', vfdBg: '#0d0202' },
   { name: 'Purple Haze',    lcd: '#e9dcff', lcdGlow: '180,150,255', vfd: '#b07bff', vfdGlow: '150,100,255', led: '#9d5cff', ledOff: '#2c1a4a', winBg: '#07050c', vfdBg: '#080510' },
+  { name: 'Synthwave',      lcd: '#ffd2ee', lcdGlow: '255,110,235', vfd: '#00f0ff', vfdGlow: '0,235,255',   led: '#ff2ec4', ledOff: '#451038', winBg: '#120626', vfdBg: '#0a0a20' },
   { name: 'White Cold',     lcd: '#f2f6ff', lcdGlow: '210,225,255', vfd: '#eef4ff', vfdGlow: '220,235,255', led: '#e8ecf2', ledOff: '#33363b', winBg: '#060709', vfdBg: '#07090c' },
 ];
 SCHEMES.forEach(s => { s.palLcd = mkPal(s.lcd, s.lcdGlow); s.palVfd = mkPal(s.vfd, s.vfdGlow); });
